@@ -4580,3 +4580,6 @@ EVP_PKEY_meth_get_digest_custom         4533	1_1_1	EXIST::FUNCTION:
 OPENSSL_INIT_set_config_filename        4534	1_1_1b	EXIST::FUNCTION:STDIO
 OPENSSL_INIT_set_config_file_flags      4535	1_1_1b	EXIST::FUNCTION:STDIO
 EVP_PKEY_get0_engine                    4536	1_1_1c	EXIST::FUNCTION:ENGINE
+BIO_ADDR_sockaddr                       4537	1_1_1c	EXIST::FUNCTION:SOCK
+BIO_ADDR_sockaddr_size                  4537	1_1_1c	EXIST::FUNCTION:SOCK
+
