@@ -12,9 +12,16 @@
 #include <openssl/bio.h>
 #include <openssl/rand.h>
 #include <openssl/bio.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
 #include <unistd.h>
+
+#ifdef WIN32
+int setup_tests(void)
+{
+    return 1;
+}
+#else
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 #include "testutil/output.h"
 #include "testutil.h"
@@ -209,3 +216,4 @@ int setup_tests(void)
     return 1;
 }
 
+#endif /* !WIN32 */
