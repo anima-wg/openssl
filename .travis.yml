@@ -29,10 +29,12 @@ compiler:
     - gcc
 
 env:
+  global:
+    - TRAVISCI_NO_IPV6=true
+  matrix:
     - CONFIG_OPTS="" DESTDIR="_install" TESTS="-test_fuzz"
     - CONFIG_OPTS="no-asm -Werror --debug no-afalgeng no-shared enable-crypto-mdebug enable-rc5 enable-md2" TESTS="-test_fuzz"
     - CONFIG_OPTS="no-asm --strict-warnings" BUILDONLY="yes" CHECKDOCS="yes"
-    - TRAVISCI_NO_IPV6=true
 
 matrix:
     include:
@@ -200,15 +202,17 @@ script:
               echo -e '+\057\057\057\057 MAKE TEST FAILED'; false;
           fi;
       else
-          if $make build_tests; then
+          if $make build_tests >~/build.out; then
               echo -e '+\057\057\057\057\057 MAKE BUILD_TESTS OK';
           else
-              echo -e '+\057\057\057\057\057 MAKE BUILD_TESTS FAILED'; false;
+              echo -e '+\057\057\057\057\057 MAKE BUILD_TESTS FAILED';
+              cat ~/build.out
+              false;
           fi;
       fi
     - if [ -n "$DESTDIR" ]; then
           mkdir "$top/$DESTDIR";
-          if $make install install_docs DESTDIR="$top/$DESTDIR"; then
+          if $make install install_docs DESTDIR="$top/$DESTDIR" >/dev/null; then
               echo -e '+\057\057\057\057\057\057 MAKE INSTALL OK';
           else
               echo -e '+\057\057\057\057\057\057 MAKE INSTALL FAILED'; false;
