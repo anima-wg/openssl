@@ -45,7 +45,7 @@ static int read_socket_and_discard(int fd, int count, unsigned portnum)
 {
   char buf[512];
   BIO  *in;
-  int  ret;
+  int  ret = 0;
   BIO_ADDR *ba;
   unsigned short port;
 
