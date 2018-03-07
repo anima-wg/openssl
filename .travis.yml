@@ -127,7 +127,7 @@ before_script:
       fi
     - if [ -n "$DESTDIR" ]; then
           sh .travis-create-release.sh $TRAVIS_OS_NAME;
-          tar -xvzf _srcdist.tar.gz;
+          tar -xzf _srcdist.tar.gz;
           mkdir _build;
           cd _build;
           srcdir=../_srcdist;
