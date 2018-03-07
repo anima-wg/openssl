@@ -13,6 +13,9 @@
 /* this is needed on Linux to get in6_pktinfo to be defined */
 #define __USE_GNU
 
+/* this is needed on OSX to get IPV6_PKTINFO */
+#define __APPLE_USE_RFC_3542
+
 #include <sys/types.h>
 #ifdef WIN32
 #include <winsock2.h>
