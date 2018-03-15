@@ -676,7 +676,7 @@ static int dgram_write_unconnected_v4(BIO *b, const char *out, int outl)
 {
     struct sockaddr_in addr;
     struct sockaddr_in *srcaddr;
-    struct in_addr     *origaddr;
+    struct in_addr *origaddr;
     struct msghdr mhdr;
     struct cmsghdr *cmsg;
     struct iovec iov;
@@ -696,7 +696,7 @@ static int dgram_write_unconnected_v4(BIO *b, const char *out, int outl)
     mhdr.msg_iovlen = 1;
 
     srcaddr = (struct sockaddr_in *)BIO_ADDR_sockaddr(&data->addr);
-    if(srcaddr && srcaddr->sin_addr.s_addr != 0) {
+    if(srcaddr != NULL && srcaddr->sin_addr.s_addr != 0) {
       memset(chdr, 0, sizeof(chdr));
 
       mhdr.msg_control = (void *)chdr;
