@@ -448,15 +448,14 @@ static void get_current_time(struct timeval *t)
 #ifndef OPENSSL_NO_SOCK
 int DTLSv1_answerHello(SSL *s, BIO *rbio, BIO *wbio)
 {
-    int next, n, ret = 0, clearpkt = 0;
-    BUF_MEM *bufm;
+    int next, n, clearpkt = 0;
     unsigned char cookie[DTLS1_COOKIE_LENGTH];
     unsigned char seq[SEQ_NUM_SIZE];
-    unsigned char *buf, *wbuf;
-    BIO_ADDR *tmpclient = NULL;
     const unsigned char *data;
+    unsigned char *buf, *wbuf;
     size_t fragoff, fraglen, msglen, reclen, align = 0;
     unsigned int rectype, versmajor, msgseq, msgtype, clientvers, cookielen;
+    BIO_ADDR *tmpclient = NULL;
     PACKET pkt, msgpkt, msgpayload, session, cookiepkt;
 
     /*
@@ -815,6 +814,11 @@ int DTLSv1_answerHello(SSL *s, BIO *rbio, BIO *wbio)
         }
     } while (next != LISTEN_SUCCESS);
 
+    /* Buffer the record in the processed_rcds queue */
+    if (!dtls_buffer_listen_record(s, reclen, seq, align))
+        return -1;
+
+    BIO_ADDR_free(tmpclient);
     return 1;
 
  end:
@@ -822,6 +826,7 @@ int DTLSv1_answerHello(SSL *s, BIO *rbio, BIO *wbio)
         /* Dump this packet. Ignore return value */
         BIO_read(rbio, buf, SSL3_RT_MAX_PLAIN_LENGTH);
     }
+    BIO_ADDR_free(tmpclient);
     return 0;
 }
 
@@ -880,16 +885,10 @@ int DTLSv1_listen(SSL *s, BIO_ADDR *client)
     if (BIO_dgram_get_peer(rbio, client) <= 0)
         BIO_ADDR_clear(client);
 
-    /* Buffer the record in the processed_rcds queue */
-    if (!dtls_buffer_listen_record(s, reclen, seq, align))
-        return -1;
-
     ret = 1;
- end:
 
  end:
-    BIO_ctrl(SSL_get_rbio(s), BIO_CTRL_DGRAM_SET_PEEK_MODE, 0, NULL);
-    BIO_ADDR_free(tmpclient);
+    /* BIO_ctrl(SSL_get_rbio(s), BIO_CTRL_DGRAM_SET_PEEK_MODE, 0, NULL); */
     return ret;
 }
 
